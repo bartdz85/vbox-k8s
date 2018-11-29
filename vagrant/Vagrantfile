@@ -1,0 +1,35 @@
+# This defines the version of vagrant
+Vagrant.configure("2") do |config|
+# Specifying the box we wish to use
+config.vm.box = "ubuntu/trusty64"
+# Adding Bridged Network Adapter
+# Iterating the loop for three times
+(0..2).each do |i|
+ # Defining VM properties
+ config.vm.define "controller-#{i}" do |node|
+   node.vm.network "private_network", ip: "10.240.0.1#{i}",
+    virtualbox_intnet: "NatNetwork"
+   # Specifying the provider as VirtualBox and naming the VM's
+   config.vm.provider "virtualbox" do |node|
+     # The VM will be named as edureka_vm{i}
+     node.name = "controller-#{i}"
+     node.customize ["modifyvm", :id, "--memory", 1024]
+     node.customize ["modifyvm", :id, "--cpus", 1]
+   end
+ end
+end
+(0..2).each do |i|
+ # Defining VM properties
+ config.vm.define "worker-#{i}" do |node|
+   node.vm.network "private_network", ip: "10.240.0.2#{i}",
+    virtualbox_intnet: "NatNetwork"
+   # Specifying the provider as VirtualBox and naming the VM's
+   config.vm.provider "virtualbox" do |node|
+     # The VM will be named as edureka_vm{i}
+     node.name = "worker-#{i}"
+     node.customize ["modifyvm", :id, "--memory", 1024]
+     node.customize ["modifyvm", :id, "--cpus", 1]
+   end
+ end
+end
+end
